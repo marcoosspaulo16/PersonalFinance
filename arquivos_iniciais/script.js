@@ -8,6 +8,16 @@ class Despesa {
         this.valor = valor
 
     }
+
+    validarDados(){
+        for(let i in this){
+            if(this[i] == '' || this[i] == undefined || this[i] == null){
+                return false
+            } 
+        }
+        return true
+    }
+
 }
 
 class Bd {
@@ -51,5 +61,27 @@ function cadastroDespesa() {
         descricao.value, 
         valor.value
     )
-    bd.gravar(despesa)
+    
+    if(despesa.validarDados()){
+        bd.gravar(despesa)
+
+        document.getElementById('modal_titulo').innerHTML = 'Registro inserido com sucesso'
+        document.getElementById('modal_titulo_div').className = 'modal-header text-success'
+        document.getElementById('modal-body').innerHTML = 'Despesa cadastrada com sucesso'
+        document.getElementById('modal_btn').innerHTML = 'Voltar'
+        document.getElementById('modal_btn').className = 'btn btn-success'
+        $('#modalRegistroDespesa').modal('show')
+
+    }else {
+        
+        document.getElementById('modal_titulo').innerHTML = 'Erro na inclusao do registro'
+        document.getElementById('modal_titulo_div').className = 'modal-header text-danger'
+        document.getElementById('modal-body').innerHTML = 'Existem campos obrigatorios que nao foram preenchidos'
+        document.getElementById('modal_btn').innerHTML = 'Voltar e corrigir'
+        document.getElementById('modal_btn').className = 'btn btn-danger'
+        $('#modalRegistroDespesa').modal('show')
+
+    }
+    
+
 }
