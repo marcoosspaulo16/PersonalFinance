@@ -60,8 +60,36 @@ class Bd {
             }
             despesas.push(despesa)
         }
+        return despesas
     }
+    pesquisar(despesa){
 
+        let despesasFiltradas = Array()
+
+        despesasFiltradas = this.recuperarTodosRegistros()
+
+        // aplicando os filtros
+
+        if(despesa.ano != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.ano == despesa.ano)
+        }
+        if(despesa.mes != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.mes == despesa.mes)
+        }
+        if(despesa.dia != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.dia == despesa.dia)
+        }
+        if(despesa.tipo != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.tipo == despesa.tipo)
+        }
+        if(despesa.descricao != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.descricao == despesa.descricao)
+        }
+        if(despesa.valor != ''){
+            despesasFiltradas = despesasFiltradas.filter(d => d.valor == despesa.valor)
+        }
+        return despesasFiltradas
+    }
 }
 
 let bd = new Bd()
@@ -93,6 +121,14 @@ function cadastroDespesa() {
         document.getElementById('modal_btn').className = 'btn btn-success'
         $('#modalRegistroDespesa').modal('show')
 
+        ano.value = ''
+        mes.value = ''
+        dia.value = ''
+        tipo.value = ''
+        descricao.value = '' 
+        valor.value = ''
+
+
     }else {
         
         document.getElementById('modal_titulo').innerHTML = 'Erro na inclusao do registro'
@@ -113,7 +149,10 @@ function carregaListaDespesas() {
 
     despesas =  bd.recuperarTodosRegistros()
 
-    var listaDespesas = document.getElementById('listaDespesas')
+    let listaDespesas = document.getElementById('listaDespesas')
+    
+    listaDespesas.innerHTML = ''
+
     /*
     <tr>
         <td> data </td>
@@ -149,4 +188,56 @@ function carregaListaDespesas() {
 
     })
 
+}
+
+function pesquisarDespesa() {
+    let ano = document.getElementById('ano').value
+    let mes = document.getElementById('mes').value
+    let dia = document.getElementById('dia').value
+    let tipo = document.getElementById('tipo').value
+    let descricao = document.getElementById('descricao').value
+    let valor = document.getElementById('valor').value
+
+    let despesa = new Despesa(ano, mes, dia, tipo, descricao, valor)
+
+    let despesas = bd.pesquisar(despesa)
+
+    let listaDespesas = document.getElementById('listaDespesas')
+    
+    listaDespesas.innerHTML = ''
+
+    /*
+    <tr>
+        <td> data </td>
+        <td> Alimentacao </td>
+        <td> Compras do mes </td>
+        <td> Valor </td>
+    */
+
+    despesas.forEach(function(d) {
+        //criando a linha (tr)
+        let linha =  listaDespesas.insertRow()
+       
+        //criar as colunas (td)
+        linha.insertCell(0).innerHTML = `${d.dia}/${d.mes}/${d.ano}`
+
+        //ajustar o tipo
+        switch(d.tipo){
+            case '1': d.tipo = 'Alimentação'
+                break
+            case '2': d.tipo = 'Educação'
+                break
+            case '3': d.tipo = 'Lazer'
+                break
+            case '4': d.tipo = 'Saúde'
+                break
+            case '5': d.tipo = 'Transporte'
+                break
+        }
+
+        linha.insertCell(1).innerHTML = d.tipo
+        linha.insertCell(2).innerHTML = d.descricao
+        linha.insertCell(3).innerHTML = d.valor
+
+    })
 }
